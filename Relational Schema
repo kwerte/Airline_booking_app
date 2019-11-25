@@ -1,5 +1,3 @@
-CREATE SCHEMA flight_app;
-
 CREATE TABLE airport(
      IATA           char(3) NOT NULL,
      name           varchar(40) NOT NULL,
@@ -7,6 +5,7 @@ CREATE TABLE airport(
      state          char(2) CHECK (country in ('US', 'Canada')),
      PRIMARY KEY(IATA)
      );
+	 
 CREATE TABLE airline(
      airline_code   char(2) NOT NULL,
      name           varchar(20),
@@ -43,32 +42,33 @@ CREATE TABLE customer_address(
      state          char(2) CHECK (country in ('US', 'Canada')),
      city           varchar(10) NOT NULL,
      street         varchar(30),
-     PRIMARY KEY(email_address, card_number, country, state, city, street),
+     PRIMARY KEY(email_address, country, state, city, street),
      FOREIGN KEY(email_address) REFERENCES customer
      );
-
+	 
 CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city varchar(10), street varchar(30))
-     RETURNS int
-     BEGIN
-     DECLARE ret int;
-          SELECT count(*) INTO ret
-          FROM customer_address
-          WHERE customer_address.email_address = email_address
-          AND
-          customer_address.country = country
-          AND
-          customer_address.state = state
-          AND
-          customer_address.city = city
-          AND
-          customer_address.street = street
+     RETURNS int AS $BODY$
+	 DECLARE ret int;
+	 BEGIN
+		SELECT count(*) INTO ret
+		FROM customer_address
+		WHERE customer_address.email_address = email_address
+		AND
+		customer_address.country = country
+		AND
+		customer_address.state = state
+		AND
+		customer_address.city = city
+		AND
+		customer_address.street = street
      RETURN ret;
-     END
-     ;
-
+     END;
+	 $BODY$
+	 LANGUAGE PLPGSQL;
+	 
 CREATE TABLE customer_credit_card(
      email_address  varchar(25) NOT NULL,
-     card_number    numeric(16) NOT NULL,
+     card_number	numeric(16) NOT NULL,
      card_country        varchar(10) NOT NULL,
      card_state          char(2) CHECK (card_country in ('US', 'Canada')),
      card_city           varchar(10) NOT NULL,
@@ -77,16 +77,18 @@ CREATE TABLE customer_credit_card(
      FOREIGN KEY(email_address) REFERENCES customer,
      CONSTRAINT check_address CHECK(addressEqual(card_email_address, card_country, card_state, card_city, card_street)>=1)
      );
-
+	 
 CREATE TABLE price(
      flight_num     int,
      date           char(10),
      airline_code   char(2),
      class          varchar(7) CHECK (class in ('First', 'Economy')),
-     price          numeric(4,2) CHECK ()
+     price          numeric(4,2),
      PRIMARY KEY(flight_num, date, airline_code, class),
-     FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight
+     FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight,
+	 CONSTRAINT price_class CHECK(price)
      );
+	 
 CREATE TABLE booking(
      email_address varchar(25) NOT NULL, 
      flight_num     int,
