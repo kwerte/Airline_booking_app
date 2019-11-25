@@ -11,17 +11,17 @@ CREATE TABLE customer_address(
      email_address  varchar(25),
      country        varchar(10) NOT NULL,
      state          char(2),
-     city           char(10) NOT NULL,
+     city           varchar(10) NOT NULL,
      street         varchar(30),
      PRIMARY KEY(email_address, card_number, country, state, city, street),
      FOREIGN KEY(email_address) REFERENCES customer
      )
 
-CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city char(10), street varchar(30))
+CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city varchar(10), street varchar(30))
      RETURNS int
      BEGIN
      DECLARE ret int;
-          SELECT count(*) into ret
+          SELECT count(*) INTO ret
           FROM customer_address
           WHERE customer_address.email_address = email_address
           AND
@@ -29,16 +29,18 @@ CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), sta
           AND
           customer_address.state = state
           AND
+          customer_address.city = city
+          AND
           customer_address.street = street
      RETURN ret;
      END
 
 CREATE TABLE customer_credit_card(
-     email_address  varchar(25),
-     card_number    numeric(16),
+     email_address  varchar(25) NOT NULL,
+     card_number    numeric(16) NOT NULL,
      card_country        varchar(10) NOT NULL,
      card_state          char(2),
-     card_city           char(10) NOT NULL,
+     card_city           varchar(10) NOT NULL,
      card_street         varchar(30),
      PRIMARY KEY(card_number),
      FOREIGN KEY(email_address) REFERENCES customer,
@@ -48,7 +50,7 @@ CREATE TABLE customer_credit_card(
 CREATE TABLE airport(
      IATA           char(3) NOT NULL,
      country        varchar(10),
-     state          varchar(2),
+     state          char(2),
      PRIMARY KEY(IATA)
      )
 CREATE TABLE airline(
@@ -66,10 +68,11 @@ CREATE TABLE flight(
      dep_time       char(5),
      arrive_time    char(5),
      cap_first      int, 
-     cap_econ      int,
+     cap_econ       int,
      PRIMARY KEY(flight_num, date, airline_code),
      FOREIGN KEY(airline_code) REFERENCES airline,
-     FOREIGN KEY(dep_IATA, dest_IATA) REFERENCES airport
+     FOREIGN KEY(dep_IATA) REFERENCES airport,
+     FOREIGN KEY(dest_IATA) REFERENCES airport
      )
 CREATE TABLE price(
      flight_num     int,
@@ -78,8 +81,7 @@ CREATE TABLE price(
      class          varchar(7) CHECK (class in ('First', 'Economy')),
      price          numeric(4,2) CHECK ()
      PRIMARY KEY(flight_num, date, airline_code, class),
-     FOREIGN KEY(flight_num, date) REFERENCES flight,
-     FOREIGN KEY(airline_code) REFERENCES airline
+     FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight
      )
 CREATE TABLE booking(
      email_address varchar(25) NOT NULL, 
@@ -90,6 +92,5 @@ CREATE TABLE booking(
      card_number   numeric(16), 
      PRIMARY KEY(email_address, flight_num, date, airline_code), 
      FOREIGN KEY(email_address) REFERENCES customer,
-     FOREIGN KEY(flight_num, date) REFERENCES flight,
-     FOREIGN KEY(airline_code) REFERENCES airline
+     FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight
      )
