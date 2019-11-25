@@ -49,6 +49,7 @@ CREATE TABLE customer_credit_card(
 
 CREATE TABLE airport(
      IATA           char(3) NOT NULL,
+     name           varchar(40) NOT NULL,
      country        varchar(10),
      state          char(2),
      PRIMARY KEY(IATA)
