@@ -1,4 +1,4 @@
-CREATE SCHEMA flight_app
+CREATE SCHEMA flight_app;
 
 CREATE TABLE airport(
      IATA           char(3) NOT NULL,
@@ -6,13 +6,13 @@ CREATE TABLE airport(
      country        varchar(10),
      state          char(2) CHECK (country in ('US', 'Canada')),
      PRIMARY KEY(IATA)
-     )
+     );
 CREATE TABLE airline(
      airline_code   char(2) NOT NULL,
      name           varchar(20),
      country        varchar(10),
      PRIMARY KEY(airline_code)
-     )
+     );
 CREATE TABLE flight(
      flight_num     int NOT NULL,
      date           char(10),
@@ -27,7 +27,7 @@ CREATE TABLE flight(
      FOREIGN KEY(airline_code) REFERENCES airline,
      FOREIGN KEY(dep_IATA) REFERENCES airport,
      FOREIGN KEY(dest_IATA) REFERENCES airport
-     )
+     );
      
 CREATE TABLE customer(
      email_address  varchar(25) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE customer(
      home_IATA      char(3),
      PRIMARY KEY(email_address),
      FOREIGN KEY(home_IATA) REFERENCES airport
-     )
+     );
 
 CREATE TABLE customer_address(
      email_address  varchar(25),
@@ -45,7 +45,7 @@ CREATE TABLE customer_address(
      street         varchar(30),
      PRIMARY KEY(email_address, card_number, country, state, city, street),
      FOREIGN KEY(email_address) REFERENCES customer
-     )
+     );
 
 CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city varchar(10), street varchar(30))
      RETURNS int
@@ -64,6 +64,7 @@ CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), sta
           customer_address.street = street
      RETURN ret;
      END
+     ;
 
 CREATE TABLE customer_credit_card(
      email_address  varchar(25) NOT NULL,
@@ -75,7 +76,7 @@ CREATE TABLE customer_credit_card(
      PRIMARY KEY(card_number),
      FOREIGN KEY(email_address) REFERENCES customer,
      CONSTRAINT check_address CHECK(addressEqual(card_email_address, card_country, card_state, card_city, card_street)>=1)
-     )
+     );
 
 CREATE TABLE price(
      flight_num     int,
@@ -85,7 +86,7 @@ CREATE TABLE price(
      price          numeric(4,2) CHECK ()
      PRIMARY KEY(flight_num, date, airline_code, class),
      FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight
-     )
+     );
 CREATE TABLE booking(
      email_address varchar(25) NOT NULL, 
      flight_num     int,
@@ -96,4 +97,4 @@ CREATE TABLE booking(
      PRIMARY KEY(email_address, flight_num, date, airline_code), 
      FOREIGN KEY(email_address) REFERENCES customer,
      FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight
-     )
+     );
