@@ -1,15 +1,15 @@
 CREATE TABLE airport(
      IATA           char(3) NOT NULL,
      name           varchar(40) NOT NULL,
-     country        varchar(10),
-     state          char(2) CHECK (NULL or country in ('US', 'Canada')),
+     country        varchar(20),
+     state          char(2) CHECK (country in ('US', 'Canada') OR NULL),
      PRIMARY KEY(IATA)
      );
 	 
 CREATE TABLE airline(
      airline_code   char(2) NOT NULL,
      name           varchar(20),
-     country        varchar(10),
+     country        varchar(20),
      PRIMARY KEY(airline_code)
      );
 	 
@@ -39,30 +39,30 @@ CREATE TABLE customer(
 
 CREATE TABLE customer_address(
      email_address  varchar(25) NOT NULL,
-     country        varchar(10) NOT NULL,
-     state          char(2) CHECK (NULL or country in ('US', 'Canada')),
-     city           varchar(10) NOT NULL,
+     country        varchar(20) NOT NULL,
+     state          char(2) CHECK (country in ('US', 'Canada') OR NULL),
+     city           varchar(20) NOT NULL,
      street         varchar(30),
-     PRIMARY KEY(email_address, country, state, city, street),
+     PRIMARY KEY(email_address, country, city, street),
      FOREIGN KEY(email_address) REFERENCES customer
      );
 	 
-CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city varchar(10), street varchar(30))
+CREATE FUNCTION addressEqual(email_addr varchar(25), country1 varchar(20), state1 char(2), city1 varchar(20), street1 varchar(30))
 	RETURNS integer
 	LANGUAGE PLPGSQL AS $BODY$
 	DECLARE
 	 	ret integer;
 	BEGIN
 		ret:=(CASE WHEN EXISTS(SELECT count(*) FROM customer_address
-							WHERE customer_address.email_address = email_address
+							WHERE customer_address.email_address = email_addr
 							AND
-							customer_address.country = country
+							customer_address.country = country1
 							AND
-							customer_address.state = state
+							customer_address.state = state1
 							AND
-							customer_address.city = city
+							customer_address.city = city1
 							AND
-							customer_address.street = street)
+							customer_address.street = street1)
 				THEN 1
 				ELSE 0
 			 	END);
@@ -73,39 +73,39 @@ CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), sta
 CREATE TABLE customer_credit_card(
      email_address  varchar(25) NOT NULL,
      card_number	numeric(16) NOT NULL,
-     card_country        varchar(10) NOT NULL,
-     card_state          char(2) CHECK (NULL or card_country in ('US', 'Canada')),
-     card_city           varchar(10) NOT NULL,
+     card_country        varchar(20) NOT NULL,
+     card_state          char(2) CHECK (card_country in ('US', 'Canada') OR NULL),
+     card_city           varchar(20) NOT NULL,
      card_street         varchar(30),
      PRIMARY KEY(card_number),
      FOREIGN KEY(email_address) REFERENCES customer,
      CONSTRAINT check_address CHECK(addressEqual(email_address, card_country, card_state, card_city, card_street)=1)
      );
 	 
-CREATE FUNCTION price_larger(flight_num		int,
-				 date           char(10),
-				 airline_code   char(2),
-				 class          varchar(7),
-				 price          numeric(4,2))
+CREATE FUNCTION price_larger(flight_num1	int,
+				 date1           char(10),
+				 airline_code1   char(2),
+				 class1          varchar(7),
+				 price1          numeric(5,2))
 	RETURNS int
 	LANGUAGE PLPGSQL AS $BODY$
 	DECLARE
 	 	ret integer;
 	BEGIN
-		ret:=(CASE WHEN class = 'Economy' THEN 1
+		ret:=(CASE WHEN class1 = 'Economy' THEN 1
 			  	WHEN NOT EXISTS(SELECT price 
      					    	FROM price 
-     					    	WHERE price.flight_num = flight_num 
-					    		AND price.date = date 
-     					    	AND price.airline_code = airline_code
-								AND price.class != class)
+     					    	WHERE price.flight_num = flight_num1
+					    		AND price.date = date1 
+     					    	AND price.airline_code = airline_code1
+								AND price.class != class1)
 			  	THEN 1
-			  	WHEN price>any(SELECT price 
+			  	WHEN price1>any(SELECT price 
      					    	FROM price 
-     					    	WHERE price.flight_num = flight_num 
-					    		AND price.date = date 
-     					    	AND price.airline_code = airline_code
-								AND price.class != class)
+     					    	WHERE price.flight_num = flight_num1
+					    		AND price.date = date1
+     					    	AND price.airline_code = airline_code1
+								AND price.class != class1)
 				THEN 1
 				ELSE 0
 			 	END);
@@ -118,7 +118,7 @@ CREATE TABLE price(
      date           char(10),
      airline_code   char(2),
      class          varchar(7) CHECK (class in ('First', 'Economy')),
-     price          numeric(4,2),
+     price          numeric(5,2),
      PRIMARY KEY(flight_num, date, airline_code, class),
      FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight,
 	 CONSTRAINT price_case CHECK(price_larger(flight_num, date, airline_code, class, price)=1)
