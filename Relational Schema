@@ -12,6 +12,7 @@ CREATE TABLE airline(
      country        varchar(10),
      PRIMARY KEY(airline_code)
      );
+	 
 CREATE TABLE flight(
      flight_num     int NOT NULL,
      date           char(10),
@@ -47,24 +48,27 @@ CREATE TABLE customer_address(
      );
 	 
 CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city varchar(10), street varchar(30))
-	RETURNS int AS $BODY$
+	RETURNS integer
+	LANGUAGE PLPGSQL AS $BODY$
+	DECLARE
+	 	ret integer;
 	BEGIN
-	DECLARE ret int;
-		SELECT count(*) INTO ret
-		FROM customer_address
-		WHERE customer_address.email_address = email_address
-			AND
-			customer_address.country = country
-			AND
-			customer_address.state = state
-			AND
-			customer_address.city = city
-			AND
-			customer_address.street = street
+		ret:=(CASE WHEN EXISTS(SELECT count(*) FROM customer_address
+							WHERE customer_address.email_address = email_address
+							AND
+							customer_address.country = country
+							AND
+							customer_address.state = state
+							AND
+							customer_address.city = city
+							AND
+							customer_address.street = street)
+				THEN 1
+				ELSE 0
+			 	END);
 		RETURN ret;
 	END;
 	$BODY$;
-	LANGUAGE PLPGSQL;
 	 
 CREATE TABLE customer_credit_card(
      email_address  varchar(25) NOT NULL,
@@ -75,9 +79,40 @@ CREATE TABLE customer_credit_card(
      card_street         varchar(30),
      PRIMARY KEY(card_number),
      FOREIGN KEY(email_address) REFERENCES customer,
-     CONSTRAINT check_address CHECK(addressEqual(email_address, card_country, card_state, card_city, card_street)>=1)
+     CONSTRAINT check_address CHECK(addressEqual(email_address, card_country, card_state, card_city, card_street)=1)
      );
 	 
+CREATE FUNCTION price_larger(flight_num		int,
+				 date           char(10),
+				 airline_code   char(2),
+				 class          varchar(7),
+				 price          numeric(4,2))
+	RETURNS int
+	LANGUAGE PLPGSQL AS $BODY$
+	DECLARE
+	 	ret integer;
+	BEGIN
+		ret:=(CASE WHEN class = 'Economy' THEN 1
+			  	WHEN NOT EXISTS(SELECT price 
+     					    	FROM price 
+     					    	WHERE price.flight_num = flight_num 
+					    		AND price.date = date 
+     					    	AND price.airline_code = airline_code
+								AND price.class != class)
+			  	THEN 1
+			  	WHEN price>any(SELECT price 
+     					    	FROM price 
+     					    	WHERE price.flight_num = flight_num 
+					    		AND price.date = date 
+     					    	AND price.airline_code = airline_code
+								AND price.class != class)
+				THEN 1
+				ELSE 0
+			 	END);
+		RETURN ret;
+	END;
+	$BODY$;
+
 CREATE TABLE price(
      flight_num     int,
      date           char(10),
@@ -86,12 +121,7 @@ CREATE TABLE price(
      price          numeric(4,2),
      PRIMARY KEY(flight_num, date, airline_code, class),
      FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight,
-     CONSTRAINT price_class CHECK(price>any(SELECT price 
-     					    FROM price 
-     					    WHERE price.flight_num = flight_num 
-					    	AND price.date = date 
-     					    	AND price.airline_code = airline_code
-						AND price.class != class)
+	 CONSTRAINT price_case CHECK(price_larger(flight_num, date, airline_code, class, price)=1)
      );
 	 
 CREATE TABLE booking(
