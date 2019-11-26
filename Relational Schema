@@ -2,7 +2,7 @@ CREATE TABLE airport(
      IATA           char(3) NOT NULL,
      name           varchar(40) NOT NULL,
      country        varchar(10),
-     state          char(2) CHECK (country in ('US', 'Canada')),
+     state          char(2) CHECK (NULL or country in ('US', 'Canada')),
      PRIMARY KEY(IATA)
      );
 	 
@@ -40,7 +40,7 @@ CREATE TABLE customer(
 CREATE TABLE customer_address(
      email_address  varchar(25) NOT NULL,
      country        varchar(10) NOT NULL,
-     state          char(2) CHECK (country in ('US', 'Canada')),
+     state          char(2) CHECK (NULL or country in ('US', 'Canada')),
      city           varchar(10) NOT NULL,
      street         varchar(30),
      PRIMARY KEY(email_address, country, state, city, street),
@@ -74,7 +74,7 @@ CREATE TABLE customer_credit_card(
      email_address  varchar(25) NOT NULL,
      card_number	numeric(16) NOT NULL,
      card_country        varchar(10) NOT NULL,
-     card_state          char(2) CHECK (card_country in ('US', 'Canada')),
+     card_state          char(2) CHECK (NULL or card_country in ('US', 'Canada')),
      card_city           varchar(10) NOT NULL,
      card_street         varchar(30),
      PRIMARY KEY(card_number),
@@ -133,5 +133,6 @@ CREATE TABLE booking(
      card_number   numeric(16), 
      PRIMARY KEY(email_address, flight_num, date, airline_code), 
      FOREIGN KEY(email_address) REFERENCES customer,
-     FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight
+     FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight,
+     FOREIGN KEY(card_number) REFERENCES customer_credit_card
      );
