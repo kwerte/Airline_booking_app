@@ -1,0 +1,76 @@
+INSERT INTO airport VALUES ('ORD', 'O’Hare International Airport', 'US', 'CA');
+INSERT INTO airport VALUES ('LHR', 'London Heathrow Airport','UK', NULL);
+INSERT INTO airport VALUES ('YBB', 'Kugaaruk Airport','Canada', 'NT');
+INSERT INTO airport VALUES ('PKR','Pokhara Airport', 'Nepal', NULL);
+INSERT INTO airport VALUES ('ZMB', 'Hamburg Hbf','Germany', NULL);
+
+INSERT INTO airline VALUES ('AA', 'American Airlines', 'US');
+INSERT INTO airline VALUES ('AC', 'Air Canada', 'Canada');
+INSERT INTO airline VALUES ('BA', 'British Airways', 'UI');
+INSERT INTO airline VALUES ('RA', 'Royal Nepal Airlines', 'Nepal');
+INSERT INTO airline VALUES ('LH', 'Lufthansa Cargo', 'Germany');
+
+INSERT INTO flight VALUES (1111, '01/01/2020', 'AA', 'LHR', 'ORD', '00:40', '13:20', 10, 30);
+INSERT INTO flight VALUES (2801, '03/05/2020', 'BA', 'ORD', 'LHR', '01:40', '23:20', 10, 30);
+INSERT INTO flight VALUES (2175, '01/05/2020', 'AA', 'PKR', 'ORD', '00:20', '12:10', 12, 40);
+INSERT INTO flight VALUES (2175, '01/06/2020', 'RA', 'ORD', 'PKR', '01:20', '14:15', 12, 40);
+INSERT INTO flight VALUES (108, '02/28/2020', 'AC', 'ORD', 'YBB', '12:40', '18:05', 8, 37);
+INSERT INTO flight VALUES (108, '03/02/2020', 'AA', 'YBB', 'ORD', '10:40', '17:05', 8, 37);
+INSERT INTO flight VALUES (4444, '04/04/2020', 'RA', 'ZMB', 'PKR', '00:05', '22:20', 12, 40);
+INSERT INTO flight VALUES (4444, '04/05/2020', 'LH', 'PKR', 'ZMB', '01:10', '20:20', 12, 40);
+
+INSERT INTO customer VALUES('jake1@gmail.com', 'Jake Hunter', 'ORD');
+INSERT INTO customer VALUES('rachael2@gmail.com', 'Rachael Bauer', 'ORD');
+INSERT INTO customer VALUES('james2@gmail.com', 'James Bond', 'LHR');
+INSERT INTO customer VALUES('alex3@gmail.com', 'Alexander Hamilton', 'YBB');
+INSERT INTO customer VALUES('apollo4@gmail.com', 'Apollo Lincoln', 'YBB');
+INSERT INTO customer VALUES('ashish11@gmail.com', 'Ashish Aditya', 'PKR');
+INSERT INTO customer VALUES('anil22@gmail.com', 'Anil Dipak', 'PKR');
+INSERT INTO customer VALUES('paul4@gmail.com', 'Paul Nuller', 'ZMB');
+INSERT INTO customer VALUES('jonas4@gmail.com', 'Jonas Meyer', 'ZMB');
+
+INSERT INTO customer_address VALUES('jake1@gmail.com', 'US', 'CA', 'San Diego', '1111 Greenlake PKWY');
+INSERT INTO customer_address VALUES('jake1@gmail.com', 'US', 'CA', 'Los Angeles', '1234 Angeles St.');
+INSERT INTO customer_address VALUES('rachael2@gmail.com', 'US', 'IL', 'Algonquin', '1011 South St.');
+INSERT INTO customer_address VALUES('james2@gmail.com', 'UK', NULL, 'London', '333 Baker St.');
+INSERT INTO customer_address VALUES('alex3@gmail.com', 'Canada', 'NT', 'Yelloknife', '121 Maple DRIVE');
+INSERT INTO customer_address VALUES('apollo4@gmail.com', 'Canada', 'QC', 'Toronto', '454 Toronto St.');
+INSERT INTO customer_address VALUES('ashish11@gmail.com', 'Nepal', NULL, 'Pokhara', '131 Pokhara St.');
+INSERT INTO customer_address VALUES('anil22@gmail.com', 'Nepal', NULL, 'Kathmandu', 'Kathmandu St.');
+INSERT INTO customer_address VALUES('paul4@gmail.com', 'Germany', NULL, 'Berlin', '111 Berlin PKWY');
+INSERT INTO customer_address VALUES('jonas4@gmail.com', 'Germany', NULL, 'Hamburg', '676 Hamburg St.');
+
+INSERT INTO customer_credit_card VALUES('jake1@gmail.com', 1234123412341234, 'US', 'CA', 'San Diego', '1111 Greenlake PKWY');
+INSERT INTO customer_credit_card VALUES('rachael2@gmail.com', 1111111111111111, 'US', 'IL', 'Algonquin', '1011 South St.');
+INSERT INTO customer_credit_card VALUES('james2@gmail.com', 5678567856785678, 'UK', NULL, 'London', '333 Baker St.');
+INSERT INTO customer_credit_card VALUES('alex3@gmail.com', 4567456745674567, 'Canada', 'NT', 'Yelloknife', '121 Maple DRIVE');
+INSERT INTO customer_credit_card VALUES('apollo4@gmail.com', 3456345634563456, 'Canada', 'QC', 'Toronto', '454 Toronto St.');
+INSERT INTO customer_credit_card VALUES('ashish11@gmail.com', 7890789078907890, 'Nepal', NULL, 'Pokhara', '131 Pokhara St.');
+INSERT INTO customer_credit_card VALUES('anil22@gmail.com', 1902345675649989, 'Nepal', NULL, 'Kathmandu', 'Kathmandu St.');
+INSERT INTO customer_credit_card VALUES('paul4@gmail.com', 5656474738382929, 'Germany', NULL, 'Berlin', '111 Berlin PKWY');
+INSERT INTO customer_credit_card VALUES('jonas4@gmail.com', 5768576849493049, 'Germany', NULL, 'Hamburg', '676 Hamburg St.');
+
+INSERT INTO price VALUES (1111, '01/01/2020', 'AA', 'First', 500.00);
+INSERT INTO price VALUES (1111, '01/01/2020', 'AA', 'Economy', 200.00);
+INSERT INTO price VALUES (2801, '03/05/2020', 'BA', 'First', 400.00);
+INSERT INTO price VALUES (2801, '03/05/2020', 'BA', 'Economy', 200.00);
+INSERT INTO price VALUES (2175, '01/05/2020', 'AA', 'First', 543.50);
+INSERT INTO price VALUES (2175, '01/05/2020', 'AA', 'Economy', 343.80);
+INSERT INTO price VALUES (2175, '01/06/2020', 'RA', 'First', 553.90);
+INSERT INTO price VALUES (2175, '01/06/2020', 'RA', 'Economy', 353.90);
+INSERT INTO price VALUES (108, '02/28/2020', 'AC', 'First', 656.00);
+INSERT INTO price VALUES (108, '02/28/2020', 'AC', 'Economy', 365.00);
+INSERT INTO price VALUES (108, '03/02/2020', 'AA', 'First', 535.00);
+INSERT INTO price VALUES (108, '03/02/2020', 'AA', 'Economy', 435.00);
+INSERT INTO price VALUES (4444, '04/04/2020', 'RA', 'First', 676.30);
+INSERT INTO price VALUES (4444, '04/04/2020', 'RA', 'Economy', 476.30);
+INSERT INTO price VALUES (4444, '04/05/2020', 'LH', 'First', 686.00);
+INSERT INTO price VALUES (4444, '04/05/2020', 'LH', 'Economy', 399.99);
+
+INSERT INTO booking VALUES ('jake1@gmail.com', 1111, '01/01/2020', 'AA', 'First', 1234123412341234);
+INSERT INTO booking VALUES ('jake1@gmail.com', 2801, '03/05/2020', 'BA', 'First', 1234123412341234);
+INSERT INTO booking VALUES ('jake1@gmail.com', 4444, '04/05/2020', 'LH', 'First', 1234123412341234);
+INSERT INTO booking VALUES ('alex3@gmail.com', 2175, '01/06/2020', 'RA', 'Economy', 4567456745674567);
+INSERT INTO booking VALUES ('alex3@gmail.com', 108, '02/28/2020', 'AC', 'First', 4567456745674567);
+INSERT INTO booking VALUES ('paul4@gmail.com', 4444, '04/04/2020', 'RA', 'Economy', 5656474738382929);
+INSERT INTO booking VALUES ('paul4@gmail.com', 4444, '04/05/2020', 'LH', 'Economy', 5656474738382929);
