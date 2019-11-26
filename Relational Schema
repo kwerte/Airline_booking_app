@@ -47,24 +47,24 @@ CREATE TABLE customer_address(
      );
 	 
 CREATE FUNCTION addressEqual(email_address varchar(25), country varchar(10), state char(2), city varchar(10), street varchar(30))
-     RETURNS int AS $BODY$
-	 DECLARE ret int;
-	 BEGIN
+	RETURNS int AS $BODY$
+	BEGIN
+	DECLARE ret int;
 		SELECT count(*) INTO ret
 		FROM customer_address
 		WHERE customer_address.email_address = email_address
-		AND
-		customer_address.country = country
-		AND
-		customer_address.state = state
-		AND
-		customer_address.city = city
-		AND
-		customer_address.street = street
-     RETURN ret;
-     END;
-	 $BODY$
-	 LANGUAGE PLPGSQL;
+			AND
+			customer_address.country = country
+			AND
+			customer_address.state = state
+			AND
+			customer_address.city = city
+			AND
+			customer_address.street = street
+		RETURN ret;
+	END;
+	$BODY$;
+	LANGUAGE PLPGSQL;
 	 
 CREATE TABLE customer_credit_card(
      email_address  varchar(25) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE customer_credit_card(
      card_street         varchar(30),
      PRIMARY KEY(card_number),
      FOREIGN KEY(email_address) REFERENCES customer,
-     CONSTRAINT check_address CHECK(addressEqual(card_email_address, card_country, card_state, card_city, card_street)>=1)
+     CONSTRAINT check_address CHECK(addressEqual(email_address, card_country, card_state, card_city, card_street)>=1)
      );
 	 
 CREATE TABLE price(
@@ -86,7 +86,12 @@ CREATE TABLE price(
      price          numeric(4,2),
      PRIMARY KEY(flight_num, date, airline_code, class),
      FOREIGN KEY(flight_num, date, airline_code) REFERENCES flight,
-	 CONSTRAINT price_class CHECK(price)
+     CONSTRAINT price_class CHECK(price>any(SELECT price 
+     					    FROM price 
+     					    WHERE price.flight_num = flight_num 
+					    	AND price.date = date 
+     					    	AND price.airline_code = airline_code
+						AND price.class != class)
      );
 	 
 CREATE TABLE booking(
